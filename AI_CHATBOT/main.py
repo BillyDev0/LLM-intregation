@@ -9,4 +9,4 @@ def tanya(pesan):
         return{'msg':'pesan input kosong'}
 
     jawaban=tanya_ai(pesan)
-    return{'jawaban':jawaban}
+    return jawaban

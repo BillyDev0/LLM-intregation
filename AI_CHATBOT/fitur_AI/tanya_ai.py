@@ -1,40 +1,38 @@
 import requests
-from AI_CHATBOT.fitur_AI.add_knowledge import add_knowledge
-from AI_CHATBOT.fitur_AI.get_knowledge import get_knowledge
-from AI_CHATBOT.fitur_AI.relevan import relevan_konteks
-
 
 AI_server="http://localhost:11434/api/generate"
 
 def tanya_ai(pesan):
-    data_konteks=get_knowledge()
-    konteks_relevan=relevan_konteks(data_konteks,pesan)
+    prompt=f"""
+anda adalah seorang asisten AI
 
-    if konteks_relevan:
-       prompt=f"""
-role: anda adalah seorang asisten AI
-instruction: {pesan}
-konteks: {konteks_relevan}
-constraint: maksimal 2 kalimat, penjelasan singkat dan jelas, gunakan bahasa indonesia
-"""
-    else:
-        prompt=f"""
-role: anda adalah seorang asisten AI
-instruction: {pesan}
-constraint: maksimal 2 kalimat, penjelasan singkat dan jelas, gunakan bahasa indonesia
-"""
+jawab prompt ini
+{pesan}
 
+aturan jawaban:
+-jawaban menggunakan bahasa indonesia
+-jawaban singkat, padat, jelas
+-jawaban tidak bertele tele
+
+bentuk output:
+-wajib JSON
+-key JSON "jawaban"
+"""
 
     payload={
-        "model":"phi3",
+        "model":"gemma:2b",
         "prompt":prompt,
-        "stream":False
+        "stream":False,
+        "options":{
+            "temperature":0.3, #opsi memilih konteks
+            "num_predict":150, #max_token
+            "top_p":0.5 #luas konteks
+        }
     }
 
     try:
         res=requests.post(AI_server,json=payload)
         jawaban=res.json()['response']
-        add_knowledge(jawaban)
         return jawaban
     
     except requests.exceptions.ConnectionError:
