@@ -20,7 +20,7 @@ def verify_token(token):
         payload=jwt.decode(token,SECREAT_KEY,algorithms=[ALGORITHM])
         user=session.query(User).filter(User.username==payload['username']).first()
         if not user:
-           return{'msg':'username tidak ditemukan'}
+           return None
         
         return payload['username']
     except JWTError:
