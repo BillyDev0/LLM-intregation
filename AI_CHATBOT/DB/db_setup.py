@@ -22,3 +22,4 @@ class User(base):
     password=Column(String)
 
 base.metadata.create_all(engine)
+
