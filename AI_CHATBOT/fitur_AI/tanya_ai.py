@@ -11,15 +11,15 @@ def tanya_ai(token,pesan):
         return{'msg':'token error'}
     
     history=get_history(username)
-    konteks="\n".join(history)
 
     prompt=f"""
 anda adalah seorang asisten AI
 
-jawab prompt ini
+jawab prompt ini:
 {pesan}
 
-data konteks={konteks}
+gunakan konteks ini jika relevan:
+{history}
 
 aturan jawaban:
 -jawaban hanya menggunakan bahasa indonesia
@@ -41,9 +41,10 @@ aturan jawaban:
     }
     
     try:
+        save_chat(username,"user",pesan)
+        
         res=requests.post(AI_server,json=payload)
         jawaban=res.json()['response']
-        save_chat(username,"user",pesan)
         save_chat(username,"AI",jawaban)
         return jawaban
     
